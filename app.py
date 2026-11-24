@@ -1,3 +1,4 @@
+import os
 import logging
 from logging.handlers import RotatingFileHandler
 from flask import Flask, render_template, request, redirect, url_for, jsonify
@@ -11,6 +12,12 @@ import controllers
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+# Lectura explícita de variables de entorno para producción (Docker / Gunicorn)
+if os.environ.get("SECRET_KEY"):
+    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
+if os.environ.get("DATABASE_URL"):
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 
 # Inicializar BD
 db.init_app(app)
